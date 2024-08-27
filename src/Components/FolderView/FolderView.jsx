@@ -3,9 +3,8 @@ import { firestore, storage } from '../../Firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { ref, listAll, getDownloadURL, uploadBytes, deleteObject } from 'firebase/storage';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaUpload, FaTrash } from 'react-icons/fa';
+import { FaUpload, FaTrash, FaCloudUploadAlt, FaEdit, FaSave, FaTimes } from 'react-icons/fa';
 
-// Modal Component
 const Modal = ({ imgSrc, onClose }) => {
     const handleKeyDown = useCallback((e) => {
         if (e.key === 'Escape') {
@@ -44,7 +43,6 @@ const Modal = ({ imgSrc, onClose }) => {
     );
 };
 
-// PdfPreview Component
 const PdfPreview = ({ url, onClose }) => {
     return (
         <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-75 z-50">
@@ -61,25 +59,27 @@ const PdfPreview = ({ url, onClose }) => {
 
 function FolderView() {
     const { folderId } = useParams();
-    const navigate = useNavigate(); // Hook para redirigir
+    const navigate = useNavigate(); 
     const [folder, setFolder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [modalImg, setModalImg] = useState(null);
     const [pdfUrl, setPdfUrl] = useState(null);
-    const [fileInput, setFileInput] = useState(null); // Reference to file input
+    const [fileInput, setFileInput] = useState(null);
     const [uploading, setUploading] = useState(false);
-    const [notification, setNotification] = useState(null); // State for notifications
+    const [notification, setNotification] = useState(null); 
+    const [dragging, setDragging] = useState(false); 
+    const [editing, setEditing] = useState(false);
+    const [newName, setNewName] = useState('');
 
     useEffect(() => {
         const fetchFolder = async () => {
             setLoading(true);
-            setNotification('Loading folder...'); // Show loading notification
+            setNotification('Loading folder...'); 
             try {
                 const folderDocRef = doc(firestore, 'folders', folderId);
                 const folderDoc = await getDoc(folderDocRef);
                 const folderData = folderDoc.data();
 
-                // Get files in the folder
                 const folderRef = ref(storage, `folders/${folderId}`);
                 const fileList = await listAll(folderRef);
                 const files = await Promise.all(
@@ -90,13 +90,14 @@ function FolderView() {
                 );
 
                 setFolder({ ...folderData, files });
-                setNotification('Folder loaded successfully!'); // Success notification
+                setNewName(folderData.name);
+                setNotification('Folder loaded successfully!'); 
             } catch (error) {
                 console.error('Error fetching folder data: ', error);
-                setNotification('Error loading folder'); // Error notification
+                setNotification('Error loading folder'); 
             } finally {
                 setLoading(false);
-                setTimeout(() => setNotification(null), 3000); // Hide notification after 3 seconds
+                setTimeout(() => setNotification(null), 3000); 
             }
         };
 
@@ -105,23 +106,65 @@ function FolderView() {
 
     const handleFileClick = (url, name) => {
         if (name.endsWith('.pdf')) {
-            setPdfUrl(url); // Set the clicked PDF URL to show in PdfPreview
+            setPdfUrl(url); 
         } else {
-            setModalImg(url); // Set the clicked image URL to show in the modal
+            setModalImg(url); 
         }
     };
 
     const handleCloseModal = () => {
-        setModalImg(null); // Close the modal
-        setPdfUrl(null); // Close the PDF preview
+        setModalImg(null); 
+        setPdfUrl(null); 
     };
 
     const handleFileChange = async (e) => {
         const files = e.target.files;
         if (files.length === 0) return;
 
+        await uploadFiles(files);
+    };
+
+    const handleDeleteFile = async (fileName) => {
+        if (window.confirm('Are you sure you want to delete this file?')) {
+            setUploading(true);
+            setNotification('Deleting file...'); 
+
+            try {
+                const fileRef = ref(storage, `folders/${folderId}/${fileName}`);
+                await deleteObject(fileRef);
+
+                const updatedFiles = folder.files.filter(file => file.name !== fileName);
+                await updateDoc(doc(firestore, 'folders', folderId), {
+                    files: updatedFiles,
+                });
+
+                setFolder((prevFolder) => ({
+                    ...prevFolder,
+                    files: updatedFiles,
+                }));
+                setNotification('File deleted successfully!'); 
+            } catch (error) {
+                console.error('Error deleting file: ', error);
+                setNotification('Error deleting file'); 
+            } finally {
+                setUploading(false);
+                setTimeout(() => setNotification(null), 3000); 
+            }
+        }
+    };
+
+    const handleDrop = async (e) => {
+        e.preventDefault();
+        setDragging(false);
+        const files = e.dataTransfer.files;
+        if (files.length === 0) return;
+
+        await uploadFiles(files);
+    };
+
+    const uploadFiles = async (files) => {
         setUploading(true);
-        setNotification('Uploading files...'); // Show notification
+        setNotification('Uploading files...'); 
 
         try {
             const folderRef = ref(storage, `folders/${folderId}`);
@@ -134,7 +177,6 @@ function FolderView() {
 
             const uploadedFiles = await Promise.all(filePromises);
 
-            // Update Firestore with the new files
             await updateDoc(doc(firestore, 'folders', folderId), {
                 files: [...folder.files, ...uploadedFiles],
             });
@@ -143,51 +185,59 @@ function FolderView() {
                 ...prevFolder,
                 files: [...prevFolder.files, ...uploadedFiles],
             }));
-            setNotification('Files uploaded successfully!'); // Success notification
+            setNotification('Files uploaded successfully!'); 
         } catch (error) {
             console.error('Error uploading files: ', error);
-            setNotification('Error uploading files'); // Error notification
+            setNotification('Error uploading files'); 
         } finally {
             setUploading(false);
-            setFileInput(null); // Clear file input
-            setTimeout(() => setNotification(null), 3000); // Hide notification after 3 seconds
+            setFileInput(null);
+            setTimeout(() => setNotification(null), 3000); 
         }
     };
 
-    const handleDeleteFile = async (fileName) => {
-        if (window.confirm('Are you sure you want to delete this file?')) {
-            setUploading(true);
-            setNotification('Deleting file...'); // Show notification
+    const handleEditName = () => {
+        setEditing(true);
+    };
 
-            try {
-                // Delete from storage
-                const fileRef = ref(storage, `folders/${folderId}/${fileName}`);
-                await deleteObject(fileRef);
+    const handleSaveName = async () => {
+        if (newName.trim() === '') return;
 
-                // Remove file from Firestore
-                const updatedFiles = folder.files.filter(file => file.name !== fileName);
-                await updateDoc(doc(firestore, 'folders', folderId), {
-                    files: updatedFiles,
-                });
+        setEditing(false);
+        setNotification('Saving folder name...'); 
 
-                setFolder((prevFolder) => ({
-                    ...prevFolder,
-                    files: updatedFiles,
-                }));
-                setNotification('File deleted successfully!'); // Success notification
-            } catch (error) {
-                console.error('Error deleting file: ', error);
-                setNotification('Error deleting file'); // Error notification
-            } finally {
-                setUploading(false);
-                setTimeout(() => setNotification(null), 3000); // Hide notification after 3 seconds
-            }
+        try {
+            await updateDoc(doc(firestore, 'folders', folderId), {
+                name: newName,
+            });
+            setFolder((prevFolder) => ({
+                ...prevFolder,
+                name: newName,
+            }));
+            setNotification('Folder name updated successfully!'); 
+        } catch (error) {
+            console.error('Error updating folder name: ', error);
+            setNotification('Error updating folder name'); 
+        } finally {
+            setTimeout(() => setNotification(null), 3000); 
         }
+    };
+
+    const handleCancelEdit = () => {
+        setEditing(false);
+        setNewName(folder?.name || '');
     };
 
     return (
-        <div className="min-h-screen bg-gray-900 text-white p-8">
-            {/* Botón para volver a las carpetas */}
+        <div
+            className={`min-h-screen bg-gray-900 text-white p-8 ${dragging ? 'border-4 border-dashed border-blue-500' : ''}`}
+            onDragOver={(e) => {
+                e.preventDefault();
+                setDragging(true);
+            }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={handleDrop}
+        >
             <button
                 onClick={() => navigate('/files')}
                 className="mb-6 text-blue-500 hover:text-blue-300"
@@ -195,12 +245,39 @@ function FolderView() {
                 &larr; Back to Files
             </button>
 
-            <h2 className="text-3xl font-bold text-center mb-6">{folder?.name || 'Folder'}</h2>
-            
-            {/* File Upload Section */}
+            <h2 className="text-3xl font-bold text-center mb-6">
+                {editing ? (
+                    <div className="flex justify-center items-center">
+                        <input
+                            type="text"
+                            value={newName}
+                            onChange={(e) => setNewName(e.target.value)}
+                            className="bg-gray-800 text-white border border-gray-600 p-2 rounded"
+                        />
+                        <button onClick={handleSaveName} className="ml-2 text-green-500">
+                            <FaSave />
+                        </button>
+                        <button onClick={handleCancelEdit} className="ml-2 text-red-500">
+                            <FaTimes />
+                        </button>
+                    </div>
+                ) : (
+                    <div className="flex justify-center items-center">
+                        <span>{folder?.name || 'Folder'}</span>
+                        <button onClick={handleEditName} className="ml-2 text-yellow-500">
+                            <FaEdit />
+                        </button>
+                    </div>
+                )}
+            </h2>
+
+            <p className="text-center mb-6">
+                {folder?.creationDate ? `Created on: ${new Date(folder.creationDate.seconds * 1000).toLocaleDateString()}` : ''}
+            </p>
+
             <div className="flex justify-end mb-6">
                 <label className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md flex items-center cursor-pointer">
-                    <FaUpload className="mr-2" /> Upload Files
+                    <FaUpload className="mr-2" /> Subir Doc
                     <input
                         type="file"
                         multiple
@@ -211,7 +288,11 @@ function FolderView() {
                 </label>
             </div>
 
-            {/* Notification */}
+            <div className="flex justify-center items-center mb-6">
+                <FaCloudUploadAlt className="text-6xl text-blue-500 mr-4" />
+                <p className="text-lg"> O Arrastra un archivo</p>
+            </div>
+
             {notification && (
                 <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
                     <div className="bg-blue-600 text-white p-4 rounded-lg shadow-lg">
@@ -220,31 +301,28 @@ function FolderView() {
                 </div>
             )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {folder?.files.map((file, index) => (
-                    <div
-                        key={index}
-                        className="relative w-full h-40 object-cover rounded-md cursor-pointer"
-                        onClick={() => handleFileClick(file.url, file.name)}
-                    >
-                        {file.name.endsWith('.pdf') ? (
-                            <div className="pdf-thumbnail">
-                                <p>PDF Preview</p>
-                            </div>
-                        ) : (
-                            <img
-                                src={file.url}
-                                alt={file.name}
-                                className="w-full h-full object-cover"
-                            />
-                        )}
-                        {/* Delete Button */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {folder?.files?.map((file) => (
+                    <div key={file.name} className="relative">
+                        <div
+                            onClick={() => handleFileClick(file.url, file.name)}
+                            className="cursor-pointer bg-gray-800 rounded-lg overflow-hidden"
+                        >
+                            {file.name.endsWith('.pdf') ? (
+                                <div className="flex items-center justify-center h-64 bg-gray-700">
+                                    <p className="text-lg">PDF Document</p>
+                                </div>
+                            ) : (
+                                <img
+                                    src={file.url}
+                                    alt={file.name}
+                                    className="object-cover w-full h-64"
+                                />
+                            )}
+                        </div>
                         <button
-                            onClick={(e) => {
-                                e.stopPropagation(); // Prevent triggering file click
-                                handleDeleteFile(file.name);
-                            }}
-                            className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full"
+                            onClick={() => handleDeleteFile(file.name)}
+                            className="absolute top-2 right-2 bg-red-600 text-white p-2 rounded-full"
                         >
                             <FaTrash />
                         </button>

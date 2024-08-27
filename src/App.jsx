@@ -1,25 +1,14 @@
+// App.jsx
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Navbar from './Components/NavBar/NavBar';
-import Home from './Components/Home/Home';
-import Login from './Components/Login/Login';
-import Register from './Components/Register/Register';
-import UploadFolder from './Components/UploadFolder/UploadFolder';
-import Files from './Components/Files/Files';
-import FolderView from './Components/FolderView/FolderView'; 
+import { BrowserRouter as Router } from 'react-router-dom';
+import RoutesConfig from './Routes'; 
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function App() {
   return (
     <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/upload" element={<UploadFolder />} />
-        <Route path="/files" element={<Files />} />
-        <Route path="/folders/:folderId" element={<FolderView />} /> 
-      </Routes>
+      <RoutesConfig />
     </Router>
   );
 }
