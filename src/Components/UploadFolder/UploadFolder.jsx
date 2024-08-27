@@ -6,6 +6,7 @@ function UploadFolder() {
   const [folderName, setFolderName] = useState('');
   const [date, setDate] = useState('');
   const [files, setFiles] = useState([]);
+  const [uploading, setUploading] = useState(false); // Estado para manejar la notificación de carga
   const navigate = useNavigate();
 
   const handleFolderSubmit = async (e) => {
@@ -20,6 +21,8 @@ function UploadFolder() {
       alert('User must be logged in to upload files.');
       return;
     }
+
+    setUploading(true); // Muestra la notificación de carga
 
     try {
       // Add folder metadata to Firestore
@@ -40,6 +43,8 @@ function UploadFolder() {
       navigate('/files'); // Redirige al componente para ver archivos
     } catch (error) {
       alert('Error uploading files: ' + error.message);
+    } finally {
+      setUploading(false); // Oculta la notificación de carga
     }
   };
 
@@ -49,7 +54,12 @@ function UploadFolder() {
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gray-900 text-white">
-      <div className="w-full max-w-md bg-gray-800 p-8 rounded-lg shadow-lg">
+      <div className="w-full max-w-md bg-gray-800 p-8 rounded-lg shadow-lg relative">
+        {uploading && (
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white py-2 px-4 rounded-md">
+            Subiendo archivos, por favor espere...
+          </div>
+        )}
         <h2 className="text-3xl font-bold text-center mb-6">Upload Folder</h2>
         <form onSubmit={handleFolderSubmit} className="space-y-6">
           <div>

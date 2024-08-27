@@ -1,7 +1,8 @@
-// src/components/Register.jsx
 import React, { useState } from 'react';
 import { auth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from '../../Firebase';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 
 function Register() {
   const [email, setEmail] = useState('');
@@ -76,9 +77,10 @@ function Register() {
         <div className="mt-6 text-center">
           <button
             onClick={handleGoogleSignUp}
-            className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md"
+            className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md flex items-center justify-center space-x-2"
           >
-            Sign up with Google
+            <FontAwesomeIcon icon={faGoogle} className="w-5 h-5" />
+            <span>Sign up with Google</span>
           </button>
         </div>
         <div className="mt-6 text-center">
