@@ -3,19 +3,16 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPasswor
 import { getFirestore, collection, addDoc, deleteDoc, doc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, listAll, getDownloadURL, deleteObject } from 'firebase/storage';
 
-
 const firebaseConfig = {
-    apiKey: "AIzaSyBk2wt_Wx6W-9I5wUq8zOgMLHasv5xzyFI",
-    authDomain: "proyecto-ame-9244c.firebaseapp.com",
-    projectId: "proyecto-ame-9244c",
-    storageBucket: "proyecto-ame-9244c.appspot.com",
-    messagingSenderId: "725782305273",
-    appId: "1:725782305273:web:216bc339a4ca1887788528"
+    apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+    authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.REACT_APP_FIREBASE_APP_ID
 };
 
-
 const app = initializeApp(firebaseConfig);
-
 
 const auth = getAuth(app);
 const firestore = getFirestore(app);
