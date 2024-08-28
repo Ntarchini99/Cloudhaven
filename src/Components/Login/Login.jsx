@@ -1,48 +1,29 @@
 import React, { useState } from 'react';
-import { auth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '../../Firebase';
+import { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '../../Firebase';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGoogle } from '@fortawesome/free-brands-svg-icons';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isRegistering, setIsRegistering] = useState(false); // Estado para saber si es registro o inicio de sesión
-  const [errorMessage, setErrorMessage] = useState(''); // Estado para manejar mensajes de error
+  const [isRegistering, setIsRegistering] = useState(false); 
+  const [errorMessage, setErrorMessage] = useState(''); 
+  const [showPassword, setShowPassword] = useState(false); 
   const navigate = useNavigate();
 
   const handleEmailPasswordSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage(''); // Limpiar mensaje de error antes de la nueva acción
+    setErrorMessage(''); 
     try {
       if (isRegistering) {
-        // Registro con email y contraseña
         await createUserWithEmailAndPassword(auth, email, password);
       } else {
-        // Inicio de sesión con email y contraseña
         await signInWithEmailAndPassword(auth, email, password);
       }
-      navigate('/files'); // Redirige al componente de carpetas
+      navigate('/files'); 
     } catch (error) {
-      // Maneja el error y muestra un mensaje
       setErrorMessage('EL USUARIO NO ESTÁ REGISTRADO');
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-      // Verifica si el usuario está registrado en la base de datos
-      if (user) {
-        // Redirige al componente de carpetas si el usuario está registrado
-        navigate('/files');
-      }
-    } catch (error) {
-      // Maneja el error y muestra un mensaje
-      setErrorMessage('Error al iniciar sesión con Google');
     }
   };
 
@@ -68,17 +49,24 @@ function Login() {
               required
             />
           </div>
-          <div>
+          <div className="relative">
             <label htmlFor="password" className="block text-sm font-medium">Password</label>
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'} 
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 mt-1 bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 mt-1 bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
               placeholder="Enter your password"
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 top-1/2 transform -translate-y-1/4"
+            >
+              <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+            </button>
           </div>
           <div>
             <button
@@ -89,15 +77,6 @@ function Login() {
             </button>
           </div>
         </form>
-        <div className="mt-6 text-center">
-          <button
-            onClick={handleGoogleSignIn}
-            className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md flex items-center justify-center space-x-2"
-          >
-            <FontAwesomeIcon icon={faGoogle} className="w-5 h-5" />
-            <span>Sign in with Google</span>
-          </button>
-        </div>
         <div className="mt-6 text-center">
           <button
             onClick={() => setIsRegistering(!isRegistering)}

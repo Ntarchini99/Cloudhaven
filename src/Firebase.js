@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, RecaptchaVerifier } from 'firebase/auth';
 import { getFirestore, collection, addDoc, deleteDoc, doc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, listAll, getDownloadURL, deleteObject } from 'firebase/storage';
 
@@ -21,4 +21,4 @@ const auth = getAuth(app);
 const firestore = getFirestore(app);
 const storage = getStorage(app);
 
-export { auth, firestore, storage, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, ref, uploadBytes, listAll, getDownloadURL, deleteObject, collection, addDoc, deleteDoc, doc };
+export { auth, firestore, storage, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, RecaptchaVerifier, ref, uploadBytes, listAll, getDownloadURL, deleteObject, collection, addDoc, deleteDoc, doc };
