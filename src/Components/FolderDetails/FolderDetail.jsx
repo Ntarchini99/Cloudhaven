@@ -13,12 +13,10 @@ function FolderDetails() {
     useEffect(() => {
         const fetchFolderDetails = async () => {
             try {
-                // Fetch folder metadata
                 const folderDoc = await getDoc(doc(firestore, 'folders', folderId));
                 if (folderDoc.exists()) {
                     setFolder(folderDoc.data());
 
-                    // Fetch images in the folder
                     const folderRef = ref(storage, `folders/${folderId}`);
                     const fileList = await listAll(folderRef);
                     const imageUrls = await Promise.all(

@@ -7,21 +7,21 @@ import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isRegistering, setIsRegistering] = useState(false); 
-  const [errorMessage, setErrorMessage] = useState(''); 
-  const [showPassword, setShowPassword] = useState(false); 
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleEmailPasswordSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage(''); 
+    setErrorMessage('');
     try {
       if (isRegistering) {
         await createUserWithEmailAndPassword(auth, email, password);
       } else {
         await signInWithEmailAndPassword(auth, email, password);
       }
-      navigate('/files'); 
+      navigate('/files');
     } catch (error) {
       setErrorMessage('EL USUARIO NO ESTÁ REGISTRADO');
     }
@@ -52,7 +52,7 @@ function Login() {
           <div className="relative">
             <label htmlFor="password" className="block text-sm font-medium">Password</label>
             <input
-              type={showPassword ? 'text' : 'password'} 
+              type={showPassword ? 'text' : 'password'}
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -84,6 +84,9 @@ function Login() {
           >
             {isRegistering ? 'Already have an account? Login' : 'Don’t have an account? Register'}
           </button>
+          <div className="mt-4">
+            <a href="/forgot-password" className="text-blue-400 hover:underline">Forgot your password?</a>
+          </div>
         </div>
       </div>
     </div>

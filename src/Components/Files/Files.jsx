@@ -3,7 +3,7 @@ import { firestore, storage, auth } from '../../Firebase';
 import { collection, query, where, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
 import { ref, listAll, getDownloadURL, deleteObject, uploadBytes } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
-import { FaPlusCircle, FaFolderOpen, FaFolder } from 'react-icons/fa'; // Importar iconos
+import { FaPlusCircle } from 'react-icons/fa';
 import ConfirmationModal from '../ConfirmationModal/ConfirmationModal';
 
 function Files() {
@@ -211,52 +211,54 @@ function Files() {
                 </div>
             )}
 
-            {folders.length === 0 ? (
-                <div className="flex flex-col items-center justify-center min-h-[300px]">
-                    <FaFolderOpen className="text-gray-500 text-6xl mb-4" />
-                    <p className="text-gray-400 text-xl">No hay ninguna carpeta disponible</p>
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {folders.map((folder) => (
-                        <div
-                            key={folder.id}
-                            className="bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer"
-                            onClick={() => handleFolderClick(folder.id)}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {folders.map((folder) => (
+                    <div
+                        key={folder.id}
+                        className="bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer"
+                        onClick={() => handleFolderClick(folder.id)}
+                    >
+                        {folder.files.length > 0 && folder.files[0].type === 'pdf' ? (
+                            <div className="w-full h-40 bg-gray-600 flex items-center justify-center rounded-md mb-4">
+                                <a
+                                    href={folder.files[0]?.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-400 hover:underline"
+                                >
+                                    {folder.files[0]?.name}
+                                </a>
+                            </div>
+                        ) : (
+                            <img
+                                src={folder.files[0]?.url || 'default-image-url'}
+                                alt={folder.name}
+                                className="w-full h-40 object-cover rounded-md mb-4"
+                            />
+                        )}
+                        <h3 className="text-xl font-semibold">{folder.name}</h3>
+                        <p className="text-gray-400">{folder.date}</p>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setFolderToDelete(folder.id);
+                                setIsModalOpen(true);
+                            }}
+                            className="mt-4 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md"
                         >
-                            {folder.files.length > 0 && folder.files[0].type === 'pdf' ? (
-                                <div className="w-full h-40 bg-gray-600 flex items-center justify-center rounded-md mb-4">
-                                    <a
-                                        href={folder.files[0]?.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <img
-                                            src={folder.files[0]?.url}
-                                            alt="PDF Cover"
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </a>
-                                </div>
-                            ) : (
-                                <div className="w-full h-40 bg-gray-600 flex items-center justify-center rounded-md mb-4">
-                                    <FaFolder className="text-white text-6xl" />
-                                </div>
-                            )}
-                            <h3 className="text-lg font-semibold">{folder.name}</h3>
-                            <p className="text-gray-400">{folder.date}</p>
-                        </div>
-                    ))}
-                </div>
-            )}
+                            Eliminar
+                        </button>
+                    </div>
+                ))}
+            </div>
 
-            {isModalOpen && (
-                <ConfirmationModal
-                    message="¿Estás seguro de que quieres eliminar esta carpeta?"
-                    onConfirm={handleDeleteFolder}
-                    onCancel={() => setIsModalOpen(false)}
-                />
-            )}
+            <ConfirmationModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={handleDeleteFolder}
+                message="¿Estás seguro de que quieres eliminar esta carpeta?"
+            />
+
         </div>
     );
 }

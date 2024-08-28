@@ -6,7 +6,7 @@ function UploadFolder() {
   const [folderName, setFolderName] = useState('');
   const [date, setDate] = useState('');
   const [files, setFiles] = useState([]);
-  const [uploading, setUploading] = useState(false); // Estado para manejar la notificación de carga
+  const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
 
   const handleFolderSubmit = async (e) => {
@@ -22,17 +22,15 @@ function UploadFolder() {
       return;
     }
 
-    setUploading(true); // Muestra la notificación de carga
+    setUploading(true);
 
     try {
-      // Add folder metadata to Firestore
       const folderRef = await addDoc(collection(firestore, 'folders'), {
         name: folderName,
         date: date,
         userId: auth.currentUser.uid,
       });
 
-      // Upload files to Firebase Storage
       const uploadPromises = Array.from(files).map(file => {
         const fileRef = ref(storage, `folders/${folderRef.id}/${file.name}`);
         return uploadBytes(fileRef, file);
@@ -40,11 +38,11 @@ function UploadFolder() {
 
       await Promise.all(uploadPromises);
 
-      navigate('/files'); // Redirige al componente para ver archivos
+      navigate('/files');
     } catch (error) {
       alert('Error uploading files: ' + error.message);
     } finally {
-      setUploading(false); // Oculta la notificación de carga
+      setUploading(false);
     }
   };
 

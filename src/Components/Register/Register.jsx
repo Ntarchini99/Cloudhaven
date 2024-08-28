@@ -15,13 +15,11 @@ function Register() {
     e.preventDefault();
     try {
       if (isRegistering) {
-        // Registro con email y contraseña
         await createUserWithEmailAndPassword(auth, email, password);
       } else {
-        // Inicio de sesión con email y contraseña
         await signInWithEmailAndPassword(auth, email, password);
       }
-      navigate('/files'); // Redirige al componente de carpetas
+      navigate('/files');
     } catch (error) {
       alert(error.message);
     }
@@ -79,6 +77,14 @@ function Register() {
           >
             {isRegistering ? 'Already have an account? Login' : 'Don’t have an account? Register'}
           </button>
+          {!isRegistering && (
+            <button
+              onClick={() => navigate('/forgot-password')}
+              className="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md mt-4"
+            >
+              Forgot Password?
+            </button>
+          )}
         </div>
       </div>
     </div>

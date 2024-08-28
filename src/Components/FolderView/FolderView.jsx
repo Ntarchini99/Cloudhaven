@@ -51,7 +51,7 @@ const PdfPreview = ({ url, onClose }) => {
                     src={url}
                     className="w-full h-full"
                     title="PDF Preview"
-                    style={{ border: 'none' }} 
+                    style={{ border: 'none' }}
                 />
                 <button
                     onClick={onClose}
@@ -68,22 +68,22 @@ const PdfPreview = ({ url, onClose }) => {
 
 function FolderView() {
     const { folderId } = useParams();
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
     const [folder, setFolder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [modalImg, setModalImg] = useState(null);
     const [pdfUrl, setPdfUrl] = useState(null);
     const [fileInput, setFileInput] = useState(null);
     const [uploading, setUploading] = useState(false);
-    const [notification, setNotification] = useState(null); 
-    const [dragging, setDragging] = useState(false); 
+    const [notification, setNotification] = useState(null);
+    const [dragging, setDragging] = useState(false);
     const [editing, setEditing] = useState(false);
     const [newName, setNewName] = useState('');
 
     useEffect(() => {
         const fetchFolder = async () => {
             setLoading(true);
-            setNotification('Loading folder...'); 
+            setNotification('Loading folder...');
             try {
                 const folderDocRef = doc(firestore, 'folders', folderId);
                 const folderDoc = await getDoc(folderDocRef);
@@ -100,13 +100,13 @@ function FolderView() {
 
                 setFolder({ ...folderData, files });
                 setNewName(folderData.name);
-                setNotification('Folder loaded successfully!'); 
+                setNotification('Folder loaded successfully!');
             } catch (error) {
                 console.error('Error fetching folder data: ', error);
-                setNotification('Error loading folder'); 
+                setNotification('Error loading folder');
             } finally {
                 setLoading(false);
-                setTimeout(() => setNotification(null), 3000); 
+                setTimeout(() => setNotification(null), 3000);
             }
         };
 
@@ -115,15 +115,15 @@ function FolderView() {
 
     const handleFileClick = (url, name) => {
         if (name.endsWith('.pdf')) {
-            setPdfUrl(url); 
+            setPdfUrl(url);
         } else {
-            setModalImg(url); 
+            setModalImg(url);
         }
     };
 
     const handleCloseModal = () => {
-        setModalImg(null); 
-        setPdfUrl(null); 
+        setModalImg(null);
+        setPdfUrl(null);
     };
 
     const handleFileChange = async (e) => {
@@ -136,7 +136,7 @@ function FolderView() {
     const handleDeleteFile = async (fileName) => {
         if (window.confirm('Are you sure you want to delete this file?')) {
             setUploading(true);
-            setNotification('Deleting file...'); 
+            setNotification('Deleting file...');
 
             try {
                 const fileRef = ref(storage, `folders/${folderId}/${fileName}`);
@@ -151,13 +151,13 @@ function FolderView() {
                     ...prevFolder,
                     files: updatedFiles,
                 }));
-                setNotification('File deleted successfully!'); 
+                setNotification('File deleted successfully!');
             } catch (error) {
                 console.error('Error deleting file: ', error);
-                setNotification('Error deleting file'); 
+                setNotification('Error deleting file');
             } finally {
                 setUploading(false);
-                setTimeout(() => setNotification(null), 3000); 
+                setTimeout(() => setNotification(null), 3000);
             }
         }
     };
@@ -173,7 +173,7 @@ function FolderView() {
 
     const uploadFiles = async (files) => {
         setUploading(true);
-        setNotification('Uploading files...'); 
+        setNotification('Uploading files...');
 
         try {
             const folderRef = ref(storage, `folders/${folderId}`);
@@ -194,14 +194,14 @@ function FolderView() {
                 ...prevFolder,
                 files: [...prevFolder.files, ...uploadedFiles],
             }));
-            setNotification('Files uploaded successfully!'); 
+            setNotification('Files uploaded successfully!');
         } catch (error) {
             console.error('Error uploading files: ', error);
-            setNotification('Error uploading files'); 
+            setNotification('Error uploading files');
         } finally {
             setUploading(false);
             setFileInput(null);
-            setTimeout(() => setNotification(null), 3000); 
+            setTimeout(() => setNotification(null), 3000);
         }
     };
 
@@ -213,7 +213,7 @@ function FolderView() {
         if (newName.trim() === '') return;
 
         setEditing(false);
-        setNotification('Saving folder name...'); 
+        setNotification('Saving folder name...');
 
         try {
             await updateDoc(doc(firestore, 'folders', folderId), {
@@ -223,12 +223,12 @@ function FolderView() {
                 ...prevFolder,
                 name: newName,
             }));
-            setNotification('Folder name updated successfully!'); 
+            setNotification('Folder name updated successfully!');
         } catch (error) {
             console.error('Error updating folder name: ', error);
-            setNotification('Error updating folder name'); 
+            setNotification('Error updating folder name');
         } finally {
-            setTimeout(() => setNotification(null), 3000); 
+            setTimeout(() => setNotification(null), 3000);
         }
     };
 
@@ -334,10 +334,10 @@ function FolderView() {
                             className="absolute top-2 right-2 bg-red-600 text-white p-2 rounded-full"
                         >
                             <FaTrash />
-                            
+
                         </button>
                     </div>
-                    
+
                 ))}
             </div>
 
