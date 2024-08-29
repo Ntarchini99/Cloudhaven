@@ -23,7 +23,7 @@ function Login() {
       }
       navigate('/files');
     } catch (error) {
-      setErrorMessage('EL USUARIO NO ESTÁ REGISTRADO');
+      setErrorMessage('Contraseña incorrecta o Usuario no REGISTRADO');
     }
   };
 
@@ -31,7 +31,7 @@ function Login() {
     <div className="min-h-screen flex flex-col justify-center items-center bg-gray-900 text-white">
       <div className="w-full max-w-md bg-gray-800 p-8 rounded-lg shadow-lg relative">
         {errorMessage && (
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white py-2 px-4 rounded-md">
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white py-2 px-4 rounded-md z-50">
             {errorMessage}
           </div>
         )}

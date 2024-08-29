@@ -4,6 +4,7 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { ref, listAll, getDownloadURL, uploadBytes, deleteObject } from 'firebase/storage';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaUpload, FaTrash, FaCloudUploadAlt, FaEdit, FaSave, FaTimes } from 'react-icons/fa';
+import ConfirmationModal from '../ConfirmationModal/ConfirmationModal'; 
 
 const Modal = ({ imgSrc, onClose }) => {
     const handleKeyDown = useCallback((e) => {
@@ -64,8 +65,6 @@ const PdfPreview = ({ url, onClose }) => {
     );
 };
 
-
-
 function FolderView() {
     const { folderId } = useParams();
     const navigate = useNavigate();
@@ -79,6 +78,8 @@ function FolderView() {
     const [dragging, setDragging] = useState(false);
     const [editing, setEditing] = useState(false);
     const [newName, setNewName] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [fileToDelete, setFileToDelete] = useState(null);
 
     useEffect(() => {
         const fetchFolder = async () => {
@@ -133,32 +134,38 @@ function FolderView() {
         await uploadFiles(files);
     };
 
-    const handleDeleteFile = async (fileName) => {
-        if (window.confirm('Are you sure you want to delete this file?')) {
-            setUploading(true);
-            setNotification('Deleting file...');
+    const handleDeleteFile = (fileName) => {
+        setFileToDelete(fileName);
+        setIsModalOpen(true);
+    };
 
-            try {
-                const fileRef = ref(storage, `folders/${folderId}/${fileName}`);
-                await deleteObject(fileRef);
+    const handleConfirmDelete = async () => {
+        if (!fileToDelete) return;
 
-                const updatedFiles = folder.files.filter(file => file.name !== fileName);
-                await updateDoc(doc(firestore, 'folders', folderId), {
-                    files: updatedFiles,
-                });
+        setUploading(true);
+        setNotification('Deleting file...');
+        try {
+            const fileRef = ref(storage, `folders/${folderId}/${fileToDelete}`);
+            await deleteObject(fileRef);
 
-                setFolder((prevFolder) => ({
-                    ...prevFolder,
-                    files: updatedFiles,
-                }));
-                setNotification('File deleted successfully!');
-            } catch (error) {
-                console.error('Error deleting file: ', error);
-                setNotification('Error deleting file');
-            } finally {
-                setUploading(false);
-                setTimeout(() => setNotification(null), 3000);
-            }
+            const updatedFiles = folder.files.filter(file => file.name !== fileToDelete);
+            await updateDoc(doc(firestore, 'folders', folderId), {
+                files: updatedFiles,
+            });
+
+            setFolder((prevFolder) => ({
+                ...prevFolder,
+                files: updatedFiles,
+            }));
+            setNotification('File deleted successfully!');
+        } catch (error) {
+            console.error('Error deleting file: ', error);
+            setNotification('Error deleting file');
+        } finally {
+            setUploading(false);
+            setIsModalOpen(false);
+            setFileToDelete(null);
+            setTimeout(() => setNotification(null), 3000);
         }
     };
 
@@ -334,15 +341,21 @@ function FolderView() {
                             className="absolute top-2 right-2 bg-red-600 text-white p-2 rounded-full"
                         >
                             <FaTrash />
-
                         </button>
                     </div>
-
                 ))}
             </div>
 
             {modalImg && <Modal imgSrc={modalImg} onClose={handleCloseModal} />}
             {pdfUrl && <PdfPreview url={pdfUrl} onClose={handleCloseModal} />}
+            {isModalOpen && (
+                <ConfirmationModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onConfirm={handleConfirmDelete}
+                    message="¿Estás seguro de eliminar este archivo?"
+                />
+            )}
         </div>
     );
 }
