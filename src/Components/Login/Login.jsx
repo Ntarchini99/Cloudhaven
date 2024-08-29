@@ -24,8 +24,13 @@ function Login() {
       navigate('/files');
     } catch (error) {
       setErrorMessage('Contraseña incorrecta o Usuario no REGISTRADO');
+
+      setTimeout(() => {
+        setErrorMessage('');
+      }, 2000);
     }
   };
+
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gray-900 text-white">
