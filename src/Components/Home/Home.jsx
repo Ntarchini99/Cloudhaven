@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import WhatsAppButton from '../WhatsAppButton/WhatsAppButton';
 
 function Home() {
     return (
@@ -15,17 +17,18 @@ function Home() {
                     Asegura y organiza todas tus recetas y estudios médicos en un solo lugar de confianza. Siempre a tu alcance, cuando más lo necesites. Tu salud, gestionada por vos.
                 </p>
                 <div className="flex justify-center mt-8">
-                    <a
-                        href="/Register"
+                    <Link
+                        to="/Register"
                         className="bg-gradient-to-r from-orange-500 to-orange-800 py-3 px-4 mx-3 rounded-md"
                     >
-                        No estas registrado?
-                    </a>
+                        No estás registrado?
+                    </Link>
                     <a href="mailto:ntarchini.developer@gmail.com" className="py-3 px-4 mx-3 rounded-md border">
                         Contacto
                     </a>
                 </div>
             </div>
+            <WhatsAppButton />
         </div>
     );
 };
