@@ -25,12 +25,12 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-gray-800 text-white shadow-lg">
+    <nav className="text-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex-shrink-0">
             <Link to={isAuthenticated ? "/files" : "/"} className="text-2xl font-bold">
-              TuRegistro
+              CloudHaven
             </Link>
           </div>
 
@@ -46,13 +46,13 @@ function Navbar() {
               <>
                 <Link
                   to="/login"
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md"
+                  className="bg-blue-400 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md"
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md"
+                  className="bg-blue-400 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md"
                 >
                   Register
                 </Link>

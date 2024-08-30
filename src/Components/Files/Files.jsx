@@ -106,7 +106,7 @@ function Files() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-900 text-white p-8">
+        <div className="min-h-screen text-white p-8">
             <h2 className="text-3xl font-bold text-center mb-6">Mis Archivos</h2>
             <div className="flex justify-end mb-6">
                 <button onClick={() => setShowCreateForm(true)} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md flex items-center">

@@ -23,7 +23,7 @@ function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-gray-900 text-white">
+    <div className="min-h-screen flex flex-col justify-center items-center text-white">
       <div className="w-full max-w-md bg-gray-800 p-8 rounded-lg shadow-lg">
         <h2 className="text-3xl font-bold text-center mb-6">Restablecer Contraseña</h2>
         <form onSubmit={handlePasswordReset} className="space-y-6">
@@ -41,7 +41,7 @@ function ForgotPassword() {
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md"
+            className="w-full bg-blue-400 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md"
           >
             Enviar Email
           </button>

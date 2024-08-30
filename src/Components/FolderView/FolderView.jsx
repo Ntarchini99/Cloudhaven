@@ -246,7 +246,7 @@ function FolderView() {
 
     return (
         <div
-            className={`min-h-screen bg-gray-900 text-white p-8 ${dragging ? 'border-4 border-dashed border-blue-500' : ''}`}
+            className={`min-h-screen text-white p-8 ${dragging ? 'border-4 border-dashed border-blue-500' : ''}`}
             onDragOver={(e) => {
                 e.preventDefault();
                 setDragging(true);

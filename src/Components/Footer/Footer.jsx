@@ -3,7 +3,7 @@ import { FaFacebook, FaInstagram, FaLinkedin, FaGlobe } from 'react-icons/fa';
 
 function Footer() {
     return (
-        <footer className="bg-gray-800 text-white py-6 mt-auto">
+        <footer className="text-white py-6 mt-auto">
             <div className="container mx-auto flex flex-col items-center">
                 <div className="flex space-x-4 mb-4">
                     <a
@@ -42,7 +42,6 @@ function Footer() {
                 </div>
                 <div className="text-center text-gray-400">
                     <p>&copy; {new Date().getFullYear()}. Todos los derechos reservados.</p>
-                    <p>Contacto: <a href="mailto:ntarchini.developer@gmail.com" className="text-gray-300 hover:text-white">ntarchini.developer@gmail.com</a></p>
                 </div>
             </div>
         </footer>

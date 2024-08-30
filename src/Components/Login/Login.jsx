@@ -33,7 +33,7 @@ function Login() {
 
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-gray-900 text-white">
+    <div className="min-h-screen flex flex-col justify-center items-center text-white">
       <div className="w-full max-w-md bg-gray-800 p-8 rounded-lg shadow-lg relative">
         {errorMessage && (
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white py-2 px-4 rounded-md z-50">
@@ -76,7 +76,7 @@ function Login() {
           <div>
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md"
+              className="w-full bg-blue-400 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md"
             >
               {isRegistering ? 'Register' : 'Login'}
             </button>
