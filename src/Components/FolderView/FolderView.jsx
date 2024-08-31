@@ -22,7 +22,7 @@ const Modal = ({ imgSrc, onClose }) => {
     }, [handleKeyDown]);
 
     return (
-        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-75 z-50">
+        <div className="fixed inset-0 flex justify-center items-center bg-opacity-75 z-50 min-h-[775px]">
             <div className="relative bg-white p-4 rounded-lg">
                 <img src={imgSrc} alt="Preview" className="max-w-full max-h-screen" />
                 <button

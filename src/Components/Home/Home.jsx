@@ -1,10 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import WhatsAppButton from '../WhatsAppButton/WhatsAppButton';
 
 function Home() {
     return (
-        <div className="relative flex flex-col items-center justify-center h-screen">
+        <div className="relative flex flex-col items-center justify-center min-h-[775px] text-gray-100 font-sans">
             <div className="absolute top-1/5 transform -translate-y-1/4">
                 <h1 className="text-4xl sm:text-6xl lg:text-7xl text-center tracking-wide">
                     Tus archivos?
@@ -19,7 +18,7 @@ function Home() {
                 <div className="flex justify-center mt-8">
                     <Link
                         to="/Register"
-                        className="bg-gradient-to-r from-orange-500 to-orange-800 py-3 px-4 mx-3 rounded-md"
+                        className="bg-gradient-to-r from-orange-500 to-orange-800 bg-gradient-to-r from-orange-500 to-orange-800 hover:from-orange-600 hover:to-orange-900 py-3 px-4 mx-3 rounded-md"
                     >
                         No estás registrado?
                     </Link>
@@ -28,7 +27,6 @@ function Home() {
                     </a>
                 </div>
             </div>
-            <WhatsAppButton />
         </div>
     );
 };

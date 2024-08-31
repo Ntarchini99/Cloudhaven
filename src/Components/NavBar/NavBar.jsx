@@ -25,7 +25,7 @@ function Navbar() {
   };
 
   return (
-    <nav className="text-white shadow-lg">
+    <nav className="text-white shadow-lg text-gray-100 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex-shrink-0">
@@ -46,13 +46,13 @@ function Navbar() {
               <>
                 <Link
                   to="/login"
-                  className="bg-blue-400 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md"
+                  className="text-gray-300 hover:text-blue-400 transition duration-300 font-semibold py-2 px-4 rounded-md"
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="bg-blue-400 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md"
+                  className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-full transition duration-300 py-2 px-4 rounded-md"
                 >
                   Register
                 </Link>

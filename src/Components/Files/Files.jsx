@@ -106,7 +106,7 @@ function Files() {
     };
 
     return (
-        <div className="min-h-screen text-white p-8">
+        <div className="min-h-screen text-white p-8 min-h-[775px]">
             <h2 className="text-3xl font-bold text-center mb-6">Mis Archivos</h2>
             <div className="flex justify-end mb-6">
                 <button onClick={() => setShowCreateForm(true)} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md flex items-center">
@@ -136,7 +136,7 @@ function Files() {
                         onChange={(e) => setNewFolder({ ...newFolder, files: Array.from(e.target.files) })}
                         className="w-full px-4 py-2 bg-gray-600 rounded-md mb-4"
                     />
-                    <button onClick={handleCreateFolder} className="bg-blue-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md">
+                    <button onClick={handleCreateFolder} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md">
                         Crear Carpeta
                     </button>
                     <button onClick={() => setShowCreateForm(false)} className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md ml-4">
