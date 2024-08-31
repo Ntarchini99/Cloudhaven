@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 function Home() {
     return (
-        <div className="relative flex flex-col items-center justify-center min-h-[775px] text-gray-100 font-sans">
+        <div className="relative flex flex-col items-center justify-center min-h-[820px] text-gray-100 font-sans">
             <div className="absolute top-1/5 transform -translate-y-1/4">
                 <h1 className="text-4xl sm:text-6xl lg:text-7xl text-center tracking-wide">
                     Tus archivos?
