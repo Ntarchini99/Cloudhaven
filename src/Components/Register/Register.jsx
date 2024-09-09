@@ -26,7 +26,7 @@ function Register() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center  text-white min-h-[820px]">
+    <div className="flex flex-col justify-center items-center  text-white min-h-[820px]">
       <div className="w-full max-w-md bg-gray-800 p-8 rounded-lg shadow-lg relative">
         <h2 className="text-3xl font-bold text-center mb-6">{isRegistering ? 'Register' : 'Login'}</h2>
         <form onSubmit={handleEmailPasswordSubmit} className="space-y-6">
