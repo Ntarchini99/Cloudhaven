@@ -24,39 +24,48 @@ function Files() {
     }, [navigate]);
 
     const fetchFolders = async () => {
-        setLoading(prev => ({ ...prev, folders: true }));
+        setLoading((prev) => ({ ...prev, folders: true }));
         try {
             const user = auth.currentUser;
             if (!user) throw new Error('User not authenticated');
 
             const folderQuery = query(collection(firestore, 'folders'), where('userId', '==', user.uid));
             const querySnapshot = await getDocs(folderQuery);
-            const foldersData = await Promise.all(querySnapshot.docs.map(async (doc) => {
-                const folderData = doc.data();
-                const files = await fetchFiles(doc.id);
-                return { id: doc.id, ...folderData, files };
-            }));
+
+            const foldersData = await Promise.all(
+                querySnapshot.docs.map(async (doc) => {
+                    const folderData = doc.data();
+                    const files = await fetchFiles(doc.id);
+                    return { id: doc.id, ...folderData, files };
+                })
+            );
+
+            // Ordenar las carpetas por fecha (de más reciente a más antigua)
+            foldersData.sort((a, b) => new Date(b.date) - new Date(a.date));
+
             setFolders(foldersData);
         } catch (error) {
-            console.error("Error fetching folders: ", error);
+            console.error('Error fetching folders: ', error);
         } finally {
-            setLoading(prev => ({ ...prev, folders: false }));
+            setLoading((prev) => ({ ...prev, folders: false }));
         }
     };
 
     const fetchFiles = async (folderId) => {
         const folderRef = ref(storage, `folders/${folderId}`);
         const fileList = await listAll(folderRef);
-        return Promise.all(fileList.items.map(async (item) => {
-            const url = await getDownloadURL(item);
-            const type = item.name.split('.').pop();
-            return { name: item.name, url, type };
-        }));
+        return Promise.all(
+            fileList.items.map(async (item) => {
+                const url = await getDownloadURL(item);
+                const type = item.name.split('.').pop();
+                return { name: item.name, url, type };
+            })
+        );
     };
 
     const handleCreateFolder = async () => {
         if (!newFolder.name || !newFolder.date) return alert('Folder name and date are required');
-        setLoading(prev => ({ ...prev, uploading: true }));
+        setLoading((prev) => ({ ...prev, uploading: true }));
 
         try {
             const user = auth.currentUser;
@@ -68,10 +77,12 @@ function Files() {
                 date: newFolder.date,
             });
 
-            await Promise.all(newFolder.files.map(file => {
-                const fileRef = ref(storage, `folders/${folderRef.id}/${file.name}`);
-                return uploadBytes(fileRef, file);
-            }));
+            await Promise.all(
+                newFolder.files.map((file) => {
+                    const fileRef = ref(storage, `folders/${folderRef.id}/${file.name}`);
+                    return uploadBytes(fileRef, file);
+                })
+            );
 
             setNewFolder({ name: '', date: '', files: [] });
             setShowCreateForm(false);
@@ -79,7 +90,7 @@ function Files() {
         } catch (error) {
             console.error('Error creating folder: ', error);
         } finally {
-            setLoading(prev => ({ ...prev, uploading: false }));
+            setLoading((prev) => ({ ...prev, uploading: false }));
         }
     };
 
@@ -100,16 +111,19 @@ function Files() {
     };
 
     const handleFolderClick = (folderId) => {
-        setLoading(prev => ({ ...prev, folder: true }));
+        setLoading((prev) => ({ ...prev, folder: true }));
         navigate(`/folders/${folderId}`);
-        setLoading(prev => ({ ...prev, folder: false }));
+        setLoading((prev) => ({ ...prev, folder: false }));
     };
 
     return (
         <div className="min-h-screen text-white p-8 min-h-[820px]">
             <h2 className="text-3xl font-bold text-center mb-6">Mis Archivos</h2>
             <div className="flex justify-end mb-6">
-                <button onClick={() => setShowCreateForm(true)} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md flex items-center">
+                <button
+                    onClick={() => setShowCreateForm(true)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md flex items-center"
+                >
                     <FaPlusCircle className="mr-2" /> Nueva Carpeta
                 </button>
             </div>
@@ -136,10 +150,16 @@ function Files() {
                         onChange={(e) => setNewFolder({ ...newFolder, files: Array.from(e.target.files) })}
                         className="w-full px-4 py-2 bg-gray-600 rounded-md mb-4"
                     />
-                    <button onClick={handleCreateFolder} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md">
+                    <button
+                        onClick={handleCreateFolder}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md"
+                    >
                         Crear Carpeta
                     </button>
-                    <button onClick={() => setShowCreateForm(false)} className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md ml-4">
+                    <button
+                        onClick={() => setShowCreateForm(false)}
+                        className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md ml-4"
+                    >
                         Cancelar
                     </button>
                 </div>
@@ -164,12 +184,21 @@ function Files() {
                         >
                             {files.length > 0 && files[0].type === 'pdf' ? (
                                 <div className="w-full h-40 bg-gray-600 flex items-center justify-center rounded-md mb-4">
-                                    <a href={files[0]?.url} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+                                    <a
+                                        href={files[0]?.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-400 hover:underline"
+                                    >
                                         {files[0]?.name}
                                     </a>
                                 </div>
                             ) : (
-                                <img src={files[0]?.url || 'default-image-url'} alt={name} className="w-full h-40 object-cover rounded-md mb-4" />
+                                <img
+                                    src={files[0]?.url || 'default-image-url'}
+                                    alt={name}
+                                    className="w-full h-40 object-cover rounded-md mb-4"
+                                />
                             )}
                             <h3 className="text-xl font-semibold">{name}</h3>
                             <p className="text-gray-400">{date}</p>
@@ -199,10 +228,8 @@ function Files() {
 }
 
 const LoadingOverlay = ({ message }) => (
-    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
-        <div className="bg-blue-600 text-white p-4 rounded-lg shadow-lg">
-            <p>{message}</p>
-        </div>
+    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-75">
+        <p className="text-white text-xl">{message}</p>
     </div>
 );
 
